@@ -63,6 +63,7 @@ public class FloatingText extends PluginBase implements Listener{
                     pos.level = sender.level;
                 }
                 Text.create(args[0], pos);
+                output += "텍스트를 성공적으로 띄웠어요";
                 break;
             default:
                 output = cmd.getUsage();
