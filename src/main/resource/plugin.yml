@@ -7,15 +7,15 @@ api: ["1.0.0"]
 
 load: STARTUP
 author: SW-Team
-description: control entity's movement
+description: 텍스트를 띄웁니다
 website: https://github.com/SW-Team/FloatingText
 commands:
   floatingtext:
-    description: control entity command
-    aliases: ["ftext", "ftx"]
-    usage: "/floatingtext <text> (<x> <y> <z> <level>)"
+    aliases: [ftext, ftx]
+    description: 텍스트를 띄웁니다
     permission: floatingtext.command
+    usage: /floatingtext <text> (<x> <y> <z> <level>)
 permissions:
   floatingtext.command:
-    description: ""
     default: op
+    description: ""

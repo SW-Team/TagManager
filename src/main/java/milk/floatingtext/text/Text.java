@@ -3,6 +3,7 @@ package milk.floatingtext.text;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
@@ -10,6 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 
 public class Text extends Entity{
@@ -76,8 +78,9 @@ public class Text extends Entity{
             !this.hasSpawned.containsKey(player.getLoaderId())
             && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))
         ){
-            AddPlayerPacket pk = new AddPlayerPacket();
+            AddEntityPacket pk = new AddEntityPacket();
             pk.eid = this.getId();
+            pk.type = EntityItem.NETWORK_ID;
             pk.x = (float) this.x;
             pk.y = (float) this.y - 0.75f;
             pk.z = (float) this.z;
