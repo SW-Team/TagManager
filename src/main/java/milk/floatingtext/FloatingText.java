@@ -24,6 +24,7 @@ public class FloatingText extends PluginBase implements Listener{
     @Override
     public void onEnable(){
         Entity.registerEntity(Text.class, true);
+        this.getServer().getPluginManager().registerEvents(this, this);
         this.getServer().getLogger().info(TextFormat.GOLD + "[FloatingText]플러그인이 로드 되었습니다");
     }
 
@@ -39,8 +40,7 @@ public class FloatingText extends PluginBase implements Listener{
         }*/
 
         Position pos = ev.getBlock().getSide(ev.getFace());
-        Text.create(/*data.get(player.getName().toLowerCase())*/"스트리이잉", pos);
-        System.out.println("시바아아아아앍");
+        Text.create(/*data.get(player.getName().toLowerCase())*/"Test", pos);
     }
 
     @Override
