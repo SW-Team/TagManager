@@ -14,7 +14,7 @@ commands:
     aliases: [ftext, ftx]
     description: 텍스트를 띄웁니다
     permission: floatingtext.command
-    usage: /floatingtext <text> (<x> <y> <z> <level>)
+    usage: "사용법: /floatingtext <text> (<x> <y> <z> <level>)"
 permissions:
   floatingtext.command:
     default: op

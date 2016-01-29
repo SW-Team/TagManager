@@ -1,16 +1,14 @@
 package milk.floatingtext;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
+import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
 import milk.floatingtext.text.Text;
@@ -35,17 +33,41 @@ public class FloatingText extends PluginBase implements Listener{
         }
 
         Player player = ev.getPlayer();
-        /*if(!data.containsKey(player.getName().toLowerCase())){
+        if(!data.containsKey(player.getName().toLowerCase())){
             return;
-        }*/
-
-        Position pos = ev.getBlock().getSide(ev.getFace());
-        Text.create(/*data.get(player.getName().toLowerCase())*/"Test", pos);
+        }
+        Text.create(data.get(player.getName().toLowerCase()), ev.getBlock());
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+    public boolean onCommand(CommandSender k, Command cmd, String label, String[] args){
         String output = "[FloatingText]";
+        if(!(k instanceof Player)){
+            k.sendMessage(output + "게임에서 입력해주세요");
+            return true;
+        }
+
+        Player sender = (Player) k;
+        switch(args.length){
+            case 1:
+                output += "텍스트를 띄울곳을 터치해주세요";
+                data.put(sender.getName().toLowerCase(), args[0]);
+                break;
+            case 4:
+            case 5:
+                Position pos = new Position(Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]));
+                if(args.length == 5){
+                    pos.level = Server.getInstance().getLevelByName(args[4]);
+                }
+                if(pos.level == null){
+                    pos.level = sender.level;
+                }
+                Text.create(args[0], pos);
+                break;
+            default:
+                output = cmd.getUsage();
+                break;
+        }
         sender.sendMessage(output);
         return true;
     }
