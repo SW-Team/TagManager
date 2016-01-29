@@ -1,0 +1,21 @@
+#name, main, version and api are required
+name: FloatingText
+main: milk.floatingtext.FloatingText
+#remember version and api is string, don't write it like this: 1.0.0, or there will be an exception
+version: "1.0"
+api: ["1.0.0"]
+
+load: STARTUP
+author: SW-Team
+description: control entity's movement
+website: https://github.com/SW-Team/FloatingText
+commands:
+  entitymanager:
+    description: control entity command
+    aliases: ["entity", "ent"]
+    usage: "/entitymanager <remove/spawn/check>"
+    permission: entitymanager.command
+permissions:
+  entitymanager.command:
+    description: ""
+    default: op
