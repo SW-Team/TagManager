@@ -15,7 +15,7 @@ import cn.nukkit.network.protocol.AddEntityPacket;
 
 public class Text extends Entity{
 
-    long timeout;
+    Long timeout;
 
     public Text(FullChunk chunk, CompoundTag nbt, String text, Long second){
         super(chunk, nbt);
@@ -32,10 +32,10 @@ public class Text extends Entity{
     }
 
     public static Text create(String text, Position pos){
-        return create(text, pos, Long.MAX_VALUE);
+        return create(text, pos, null);
     }
 
-    public static Text create(String text, Position pos, long second){
+    public static Text create(String text, Position pos, Long second){
         FullChunk chunk = pos.getLevel().getChunk(((int) pos.x) >> 4, ((int) pos.z) >> 4, true);
         if(chunk == null){
             return null;
@@ -99,8 +99,13 @@ public class Text extends Entity{
     }
 
     @Override
+    public boolean entityBaseTick(int tickDiff){
+        return false;
+    }
+
+    @Override
     public boolean onUpdate(int tick){
-        if(--this.timeout < 0){
+        if(this.timeout != null && --this.timeout < 0){
             this.close();
             return false;
         }
