@@ -10,12 +10,12 @@ author: SW-Team
 description: control entity's movement
 website: https://github.com/SW-Team/FloatingText
 commands:
-  entitymanager:
+  floatingtext:
     description: control entity command
-    aliases: ["entity", "ent"]
-    usage: "/entitymanager <remove/spawn/check>"
-    permission: entitymanager.command
+    aliases: ["ftext", "ftx"]
+    usage: "/floatingtext <text> (<x> <y> <z> <level>)"
+    permission: floatingtext.command
 permissions:
-  entitymanager.command:
+  floatingtext.command:
     description: ""
     default: op
