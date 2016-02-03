@@ -23,7 +23,7 @@ public class Text extends Entity{
         this.timeout = second;
         this.setNameTag(text);
         this.setNameTagVisible();
-        this.setDataProperty(DATA_NO_AI, new ByteEntityData((byte) 1));
+        this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
     }
 
     @Override
