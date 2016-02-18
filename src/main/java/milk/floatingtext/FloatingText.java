@@ -36,7 +36,7 @@ public class FloatingText extends PluginBase implements Listener{
         if(!data.containsKey(player.getName().toLowerCase())){
             return;
         }
-        Text.create(data.get(player.getName().toLowerCase()), ev.getBlock());
+        Text.create(data.get(player.getName().toLowerCase()), ev.getBlock().add(0.5, 0.5, 0.5));
     }
 
     @Override
