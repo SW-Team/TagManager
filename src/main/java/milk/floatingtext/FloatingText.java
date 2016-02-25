@@ -23,7 +23,12 @@ public class FloatingText extends PluginBase implements Listener{
     public void onEnable(){
         Entity.registerEntity("Text", Text.class, true);
         this.getServer().getPluginManager().registerEvents(this, this);
-        this.getServer().getLogger().info(TextFormat.GOLD + "[FloatingText]플러그인이 로드 되었습니다");
+        this.getServer().getLogger().info(TextFormat.GOLD + "[FloatingText]Plugin has been enabled");
+    }
+
+    @Override
+    public void onDisable(){
+        this.getServer().getLogger().info(TextFormat.GOLD + "[FloatingText]Plugin has been disabled");
     }
 
     @EventHandler
