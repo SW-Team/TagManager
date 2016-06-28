@@ -2,8 +2,8 @@ package milk.floatingtext.text;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
@@ -11,7 +11,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.network.protocol.AddPlayerPacket;
+
+import java.util.UUID;
 
 public class Text extends Entity{
 
@@ -23,7 +25,6 @@ public class Text extends Entity{
         this.timeout = second;
         this.setNameTag(text);
         this.setNameTagVisible();
-        this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
     }
 
     @Override
@@ -77,16 +78,26 @@ public class Text extends Entity{
             !this.hasSpawned.containsKey(player.getLoaderId())
             && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))
         ){
-            AddEntityPacket pk = new AddEntityPacket();
+            AddPlayerPacket pk = new AddPlayerPacket();
+            pk.uuid = UUID.randomUUID();
+            pk.username = "";
             pk.eid = this.getId();
-            pk.type = EntityItem.NETWORK_ID;
             pk.x = (float) this.x;
-            pk.y = (float) this.y - 0.75f;
+            pk.y = (float) (this.y - 1.62);
             pk.z = (float) this.z;
-            pk.speedX = pk.speedY = pk.speedZ = 0;
-            pk.yaw = (float) this.yaw;
-            pk.pitch = (float) this.pitch;
-            pk.metadata = this.dataProperties;
+            pk.speedX = 0;
+            pk.speedY = 0;
+            pk.speedZ = 0;
+            pk.yaw = 0;
+            pk.pitch = 0;
+            pk.metadata = new EntityMetadata()
+                .putByte(Entity.DATA_FLAGS, 1 << Entity.DATA_FLAG_INVISIBLE)
+                .putString(Entity.DATA_NAMETAG, "")
+                .putBoolean(Entity.DATA_SHOW_NAMETAG, true)
+                .putBoolean(Entity.DATA_NO_AI, true)
+                .putLong(Entity.DATA_LEAD_HOLDER, -1)
+                .putByte(Entity.DATA_LEAD, 0);
+            pk.item = Item.get(Item.AIR);
             player.dataPacket(pk);
 
             this.hasSpawned.put(player.getLoaderId(), player);
