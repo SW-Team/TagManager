@@ -42,13 +42,8 @@ public class Text extends Entity{
             return null;
         }
 
-        if(!chunk.isGenerated()){
-            chunk.setGenerated();
-        }
-
-        if(!chunk.isPopulated()){
-            chunk.setPopulated();
-        }
+        chunk.setGenerated();
+        chunk.setPopulated();
 
         CompoundTag nbt = new CompoundTag()
             .putList(new ListTag<DoubleTag>("Pos")
@@ -64,7 +59,7 @@ public class Text extends Entity{
                 .add(new FloatTag("", 0)));
 
         Entity k = Entity.createEntity("Text", chunk, nbt, text, second);
-        if(k == null){
+        if(k == null || k.closed){
             return null;
         }
 
