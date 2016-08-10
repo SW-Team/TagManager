@@ -2,7 +2,9 @@ package milk.floatingtext.text;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -24,7 +26,8 @@ public class Text extends Entity{
 
         this.timeout = second;
         this.setNameTag(text);
-        this.setNameTagVisible();
+        this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
+        this.setDataProperty(new ByteEntityData(DATA_FLAGS, 1 << Entity.DATA_FLAG_INVISIBLE));
     }
 
     @Override
@@ -68,11 +71,14 @@ public class Text extends Entity{
     }
 
     @Override
+    public void attack(EntityDamageEvent ev){}
+
+    @Override
+    public void heal(EntityRegainHealthEvent ev){}
+
+    @Override
     public void spawnTo(Player player){
-        if(
-            !this.hasSpawned.containsKey(player.getLoaderId())
-            && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))
-        ){
+        if(!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))){
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = UUID.randomUUID();
             pk.username = "";
@@ -80,18 +86,8 @@ public class Text extends Entity{
             pk.x = (float) this.x;
             pk.y = (float) (this.y - 1.62);
             pk.z = (float) this.z;
-            pk.speedX = 0;
-            pk.speedY = 0;
-            pk.speedZ = 0;
-            pk.yaw = 0;
-            pk.pitch = 0;
-            pk.metadata = new EntityMetadata()
-                .putByte(Entity.DATA_FLAGS, 1 << Entity.DATA_FLAG_INVISIBLE)
-                .putString(Entity.DATA_NAMETAG, "")
-                .putBoolean(Entity.DATA_SHOW_NAMETAG, true)
-                .putBoolean(Entity.DATA_NO_AI, true)
-                .putLong(Entity.DATA_LEAD_HOLDER, -1)
-                .putByte(Entity.DATA_LEAD, 0);
+            pk.speedX = pk.speedY = pk.speedZ = pk.yaw = pk.pitch = 0;
+            pk.metadata = this.dataProperties;
             pk.item = Item.get(Item.AIR);
             player.dataPacket(pk);
 
@@ -100,13 +96,11 @@ public class Text extends Entity{
     }
 
     @Override
-    protected void updateMovement(){
-
-    }
+    protected void updateMovement(){}
 
     @Override
     public boolean entityBaseTick(int tickDiff){
-        return false;
+        return true;
     }
 
     @Override
