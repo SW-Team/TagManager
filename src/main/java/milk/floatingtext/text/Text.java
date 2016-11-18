@@ -2,7 +2,8 @@ package milk.floatingtext.text;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.data.LongEntityData;
+import cn.nukkit.entity.data.StringEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.item.Item;
@@ -13,33 +14,29 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.AddPlayerPacket;
-
-import java.util.UUID;
+import cn.nukkit.network.protocol.AddItemEntityPacket;
 
 public class Text extends Entity{
 
-    Long timeout;
+    private long timeout;
 
-    public Text(FullChunk chunk, CompoundTag nbt, String text, Long second){
+    public Text(FullChunk chunk, CompoundTag nbt, String text, long second){
         super(chunk, nbt);
-
         this.timeout = second;
-        this.setNameTag(text);
-        this.setDataProperty(new ByteEntityData(DATA_NO_AI, (byte) 1));
-        this.setDataProperty(new ByteEntityData(DATA_FLAGS, 1 << Entity.DATA_FLAG_INVISIBLE));
-    }
 
-    @Override
-    public int getNetworkId(){
-        return NETWORK_ID;
+        long flags = 0;
+        flags |= 1 << DATA_FLAG_IMMOBILE;
+        flags |= 1 << DATA_FLAG_CAN_SHOW_NAMETAG;
+        flags |= 1 << DATA_FLAG_ALWAYS_SHOW_NAMETAG;
+        this.setDataProperty(new LongEntityData(DATA_FLAGS, flags), false);
+        this.setDataProperty(new StringEntityData(DATA_NAMETAG, text), false);
     }
 
     public static Text create(String text, Position pos){
-        return create(text, pos, null);
+        return create(text, pos, -1);
     }
 
-    public static Text create(String text, Position pos, Long second){
+    public static Text create(String text, Position pos, long second){
         FullChunk chunk = pos.getLevel().getChunk(((int) pos.x) >> 4, ((int) pos.z) >> 4, true);
         if(chunk == null){
             return null;
@@ -67,45 +64,48 @@ public class Text extends Entity{
         }
 
         k.spawnToAll();
+
         return (Text) k;
     }
 
-    @Override
+    public void setTimeout(long timeout){
+        this.timeout = Math.max(0, timeout);
+    }
+
+    public int getNetworkId(){
+        return NETWORK_ID;
+    }
+
     public void attack(EntityDamageEvent ev){}
 
-    @Override
     public void heal(EntityRegainHealthEvent ev){}
 
-    @Override
     public void spawnTo(Player player){
         if(!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))){
-            AddPlayerPacket pk = new AddPlayerPacket();
-            pk.uuid = UUID.randomUUID();
-            pk.username = "";
-            pk.eid = this.getId();
+            this.hasSpawned.put(player.getLoaderId(), player);
+
+            AddItemEntityPacket pk = new AddItemEntityPacket();
+            pk.entityUniqueId = this.getId();
+            pk.entityRuntimeId = this.getId();
             pk.x = (float) this.x;
-            pk.y = (float) (this.y - 1.62);
+            pk.y = (float) (this.y - 0.2);
             pk.z = (float) this.z;
-            pk.speedX = pk.speedY = pk.speedZ = pk.yaw = pk.pitch = 0;
-            pk.metadata = this.dataProperties;
+            pk.speedX = pk.speedY = pk.speedZ = 0;
             pk.item = Item.get(Item.AIR);
             player.dataPacket(pk);
 
-            this.hasSpawned.put(player.getLoaderId(), player);
+            this.sendData(player);
         }
     }
 
-    @Override
     protected void updateMovement(){}
 
-    @Override
     public boolean entityBaseTick(int tickDiff){
         return true;
     }
 
-    @Override
     public boolean onUpdate(int tick){
-        if(this.timeout != null && --this.timeout < 0){
+        if(this.timeout != -1 && --this.timeout < 0){
             this.close();
             return false;
         }

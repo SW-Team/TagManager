@@ -8,6 +8,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.level.Position;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
@@ -38,10 +39,20 @@ public class FloatingText extends PluginBase implements Listener{
         }
 
         Player player = ev.getPlayer();
-        if(!data.containsKey(player.getName().toLowerCase())){
+        /*if(!data.containsKey(player.getName().toLowerCase())){
             return;
-        }
-        Text.create(data.get(player.getName().toLowerCase()), ev.getBlock().add(0.5, 0.5, 0.5));
+        }*/
+        //Text.create(data.get(player.getName().toLowerCase()), ev.getBlock().add(0.5, 0.5, 0.5));
+        Text.create("asdf", ev.getBlock().add(0.5, 0.5, 0.5));
+    }
+
+    @EventHandler
+    public void onPlayerMoveEvent(PlayerMoveEvent ev){
+        Player player =  ev.getPlayer();
+        /*Text.create("사과서버에 오신걸 환영합니다"
+            + "\n서버에 활동하기 위해선"
+            + "\n로그인을 하셔야합니다"
+            + "\n로그인: /ㄹㄱㅇ <id> <pass>", player.getLevel().getSafeSpawn().add(3.9, 0.8, 0));*/
     }
 
     @Override
