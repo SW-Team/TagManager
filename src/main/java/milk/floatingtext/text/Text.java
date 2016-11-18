@@ -68,8 +68,8 @@ public class Text extends Entity{
         return (Text) k;
     }
 
-    public void setTimeout(long timeout){
-        this.timeout = Math.max(0, timeout);
+    public void setTimeout(long second){
+        this.timeout = Math.max(0, second) * 20;
     }
 
     public int getNetworkId(){
