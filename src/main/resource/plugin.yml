@@ -10,12 +10,11 @@ author: SW-Team
 description: 텍스트를 띄웁니다
 website: https://github.com/SW-Team/TagManager
 commands:
-  floatingtext:
-    aliases: [ftext, ftx]
+  tag:
     description: 텍스트를 띄웁니다
-    permission: tagmanager.command
-    usage: "사용법: /tagmanager <text> (<x> <y> <z> <level>)"
+    permission: tagmanager.command.tag
+    usage: "사용법: /tag <text> (<x> <y> <z> <level>)"
 permissions:
-  floatingtext.command:
+  tagmanager.command.tag:
     default: op
     description: ""
