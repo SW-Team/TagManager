@@ -1,4 +1,4 @@
-package milk.floatingtext.text;
+package milk.tagmanager.text;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
@@ -16,11 +16,11 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 
-public class Text extends Entity{
+public class Tag extends Entity{
 
     private long timeout;
 
-    public Text(FullChunk chunk, CompoundTag nbt, String text, long second){
+    public Tag(FullChunk chunk, CompoundTag nbt, String text, long second){
         super(chunk, nbt);
         this.timeout = second;
 
@@ -32,11 +32,11 @@ public class Text extends Entity{
         this.setDataProperty(new StringEntityData(DATA_NAMETAG, text), false);
     }
 
-    public static Text create(String text, Position pos){
+    public static Tag create(String text, Position pos){
         return create(text, pos, -1);
     }
 
-    public static Text create(String text, Position pos, long second){
+    public static Tag create(String text, Position pos, long second){
         FullChunk chunk = pos.getLevel().getChunk(((int) pos.x) >> 4, ((int) pos.z) >> 4, true);
         if(chunk == null){
             return null;
@@ -58,14 +58,14 @@ public class Text extends Entity{
                 .add(new FloatTag("", 0))
                 .add(new FloatTag("", 0)));
 
-        Entity k = Entity.createEntity("Text", chunk, nbt, text, second);
+        Entity k = Entity.createEntity("Tag", chunk, nbt, text, second);
         if(k == null || k.closed){
             return null;
         }
 
         k.spawnToAll();
 
-        return (Text) k;
+        return (Tag) k;
     }
 
     public void setTimeout(long second){
