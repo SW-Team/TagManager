@@ -11,7 +11,6 @@ import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerInteractEvent;
-import cn.nukkit.event.player.PlayerMoveEvent;
 import cn.nukkit.level.Position;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
@@ -47,11 +46,6 @@ public class TagManager extends PluginBase implements Listener{
             return;
         }
         Tag.create(data.get(player.getName().toLowerCase()), ev.getBlock().add(0.5, 0.5, 0.5));
-    }
-
-    @EventHandler
-    public void onPlayerMoveEvent(PlayerMoveEvent ev){
-        Player player =  ev.getPlayer();
     }
 
     public static void tagItem(EntityItem item, String text){
