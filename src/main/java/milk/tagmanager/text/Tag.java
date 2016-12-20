@@ -16,9 +16,13 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 
+import java.util.ArrayList;
+
 public class Tag extends Entity{
 
     private long timeout;
+
+    private ArrayList<String> hidePlayer = new ArrayList<>();
 
     public Tag(FullChunk chunk, CompoundTag nbt, String text, long second){
         super(chunk, nbt);
@@ -30,6 +34,10 @@ public class Tag extends Entity{
         flags |= 1 << DATA_FLAG_ALWAYS_SHOW_NAMETAG;
         this.setDataProperty(new LongEntityData(DATA_FLAGS, flags), false);
         this.setDataProperty(new StringEntityData(DATA_NAMETAG, text), false);
+    }
+
+    public int getNetworkId(){
+        return NETWORK_ID;
     }
 
     public static Tag create(String text, Position pos){
@@ -64,7 +72,6 @@ public class Tag extends Entity{
         }
 
         k.spawnToAll();
-
         return (Tag) k;
     }
 
@@ -72,16 +79,12 @@ public class Tag extends Entity{
         this.timeout = Math.max(0, second) * 20;
     }
 
-    public int getNetworkId(){
-        return NETWORK_ID;
-    }
-
     public void attack(EntityDamageEvent ev){}
 
     public void heal(EntityRegainHealthEvent ev){}
 
     public void spawnTo(Player player){
-        if(!this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))){
+        if(!this.hidePlayer.contains(player.getName()) && !this.hasSpawned.containsKey(player.getLoaderId()) && player.usedChunks.containsKey(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()))){
             this.hasSpawned.put(player.getLoaderId(), player);
 
             AddItemEntityPacket pk = new AddItemEntityPacket();
@@ -98,7 +101,10 @@ public class Tag extends Entity{
         }
     }
 
-    protected void updateMovement(){}
+    public void setHidePlayer(Player player){
+        this.despawnFrom(player);
+        this.hidePlayer.add(player.getName());
+    }
 
     public boolean entityBaseTick(int tickDiff){
         return true;
@@ -109,7 +115,20 @@ public class Tag extends Entity{
             this.close();
             return false;
         }
+        this.updateMovement();
         return true;
+    }
+
+    public void updateMovement(){
+        if(this.lastX != this.x || this.lastY != this.y || this.lastZ != this.z || this.lastYaw != this.yaw || this.lastPitch != this.pitch){
+            this.lastX = this.x;
+            this.lastY = this.y;
+            this.lastZ = this.z;
+            this.lastYaw = this.yaw;
+            this.lastPitch = this.pitch;
+
+            this.addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
+        }
     }
 
 }
