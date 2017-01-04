@@ -1,21 +1,19 @@
 package milk.tagmanager.text;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.EntityMetadata;
-import cn.nukkit.entity.data.LongEntityData;
-import cn.nukkit.entity.data.StringEntityData;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Tag extends Position{
@@ -54,9 +52,7 @@ public class Tag extends Position{
             return;
         }
 
-        this.id = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
-
-        list.put(this.id, this);
+        list.put(this.id = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL), this);
         if(second != null){
             this.timeout = second;
         }
@@ -70,12 +66,33 @@ public class Tag extends Position{
         flags |= 1 << Entity.DATA_FLAG_IMMOBILE;
         flags |= 1 << Entity.DATA_FLAG_CAN_SHOW_NAMETAG;
         flags |= 1 << Entity.DATA_FLAG_ALWAYS_SHOW_NAMETAG;
-        this.dataProperties.put(new LongEntityData(Entity.DATA_FLAGS, flags));
-        this.dataProperties.put(new StringEntityData(Entity.DATA_NAMETAG, text));
+        this.dataProperties.putLong(Entity.DATA_FLAGS, flags);
+        this.dataProperties.putString(Entity.DATA_NAMETAG, text);
     }
 
     public String getText(){
         return this.dataProperties.getString(Entity.DATA_NAMETAG);
+    }
+
+    public long getTimeout(){
+        return this.timeout;
+    }
+
+    public String[] getHidePlayers(){
+        return this.hidePlayer.toArray(new String[this.hidePlayer.size()]);
+    }
+
+    public void setText(String text){
+        this.dataProperties.putString(Entity.DATA_NAMETAG, text);
+    }
+
+    public void setTimeout(long second){
+        this.timeout = Math.max(0, second) * 20;
+    }
+
+    public void setHidePlayer(Player player){
+        this.despawnFrom(player);
+        this.hidePlayer.add(player.getName());
     }
 
     public void onUpdate(){
@@ -95,15 +112,6 @@ public class Tag extends Position{
             }
         });
         this.level.getChunkPlayers((int) this.x >> 4, (int) this.z >> 4).forEach((id, player) -> this.spawnTo(player));
-    }
-
-    public void setTimeout(long second){
-        this.timeout = Math.max(0, second) * 20;
-    }
-
-    public void setHidePlayer(Player player){
-        this.despawnFrom(player);
-        this.hidePlayer.add(player.getName());
     }
 
     public void updateMovement(){

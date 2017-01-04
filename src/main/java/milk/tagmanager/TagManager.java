@@ -49,17 +49,6 @@ public class TagManager extends PluginBase implements Listener{
         new Tag(ev.getBlock().add(0.5, 0.5, 0.5), data.get(player.getName().toLowerCase()));
     }
 
-    public static void tagItem(EntityItem item, String text){
-        long flags = 0;
-        flags |= 1 << Entity.DATA_FLAG_IMMOBILE;
-        flags |= 1 << Entity.DATA_FLAG_CAN_SHOW_NAMETAG;
-        flags |= 1 << Entity.DATA_FLAG_ALWAYS_SHOW_NAMETAG;
-        item.setDataProperty(new LongEntityData(Entity.DATA_FLAGS, flags), false);
-        item.setDataProperty(new StringEntityData(Entity.DATA_NAMETAG, text), false);
-
-        item.sendData(item.getViewers().values().stream().toArray(Player[]::new));
-    }
-
     @Override
     public boolean onCommand(CommandSender k, Command cmd, String label, String[] args){
         String output = "[TagManager]";

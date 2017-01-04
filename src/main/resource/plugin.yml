@@ -13,7 +13,7 @@ commands:
   tag:
     description: 텍스트를 띄웁니다
     permission: tagmanager.command.tag
-    usage: "사용법: /tag <text> (<x> <y> <z> <level>)"
+    usage: "사용법: /tag <text> (<x> <y> <z> [<level>])"
 permissions:
   tagmanager.command.tag:
     default: op
