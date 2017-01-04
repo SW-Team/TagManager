@@ -16,6 +16,7 @@ import cn.nukkit.network.protocol.SetEntityDataPacket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Tag extends Position{
 
@@ -49,12 +50,11 @@ public class Tag extends Position{
     }
 
     public Tag(Position pos, String text, Long second){
-        FullChunk chunk;
-        if(text.isEmpty() || !pos.isValid() || (chunk = pos.level.getChunk((int) pos.x >> 4, (int) pos.z >> 4, true)) == null){
+        if(text.isEmpty() || !pos.isValid()){
             return;
         }
 
-        this.id = 100;//TODO
+        this.id = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
 
         list.put(this.id, this);
         if(second != null){
@@ -65,8 +65,6 @@ public class Tag extends Position{
         this.y = pos.y;
         this.z = pos.z;
         this.level = pos.level;
-
-        this.chunk = chunk;
 
         long flags = 0;
         flags |= 1 << Entity.DATA_FLAG_IMMOBILE;
@@ -110,10 +108,18 @@ public class Tag extends Position{
 
     public void updateMovement(){
         if(this.lastX != this.x || this.lastY != this.y || this.lastZ != this.z){
+            FullChunk chunk = this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true);
+            if(chunk == null){
+                this.x = this.lastX;
+                this.y = this.lastY;
+                this.z = this.lastZ;
+                return;
+            }
+
             this.lastX = this.x;
             this.lastY = this.y;
             this.lastZ = this.z;
-            this.level.addEntityMovement(this.chunk.getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, 0, 0, 0);
+            this.level.addEntityMovement((this.chunk = chunk).getX(), this.chunk.getZ(), this.id, this.x, this.y, this.z, 0, 0, 0);
         }
     }
 
