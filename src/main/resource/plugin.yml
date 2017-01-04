@@ -5,7 +5,7 @@ main: milk.tagmanager.TagManager
 version: "1.0"
 api: ["1.0.0"]
 
-load: STARTUP
+load: POSTWORLD
 author: SW-Team
 description: 텍스트를 띄웁니다
 website: https://github.com/SW-Team/TagManager

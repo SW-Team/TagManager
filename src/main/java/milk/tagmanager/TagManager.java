@@ -15,6 +15,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
 
+import milk.tagmanager.task.TagTask;
 import milk.tagmanager.text.Tag;
 
 import java.util.HashMap;
@@ -25,8 +26,8 @@ public class TagManager extends PluginBase implements Listener{
 
     @Override
     public void onEnable(){
-        Entity.registerEntity("Tag", Tag.class, true);
         this.getServer().getPluginManager().registerEvents(this, this);
+        this.getServer().getScheduler().scheduleRepeatingTask(new TagTask(), 30);
         this.getServer().getLogger().info(TextFormat.GOLD + "[TagManager]Plugin has been enabled");
     }
 
@@ -45,7 +46,7 @@ public class TagManager extends PluginBase implements Listener{
         if(!data.containsKey(player.getName().toLowerCase())){
             return;
         }
-        Tag.create(data.get(player.getName().toLowerCase()), ev.getBlock().add(0.5, 0.5, 0.5));
+        new Tag(ev.getBlock().add(0.5, 0.5, 0.5), data.get(player.getName().toLowerCase()));
     }
 
     public static void tagItem(EntityItem item, String text){
@@ -82,7 +83,7 @@ public class TagManager extends PluginBase implements Listener{
                 if(pos.level == null){
                     pos.level = sender.level;
                 }
-                Tag.create(args[0], pos);
+                new Tag(pos, args[0]);
                 output += "텍스트를 성공적으로 띄웠어요";
                 break;
             default:
