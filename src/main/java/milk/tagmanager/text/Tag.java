@@ -11,6 +11,7 @@ import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -164,7 +165,14 @@ public class Tag extends Position{
     }
 
     public void close(){
-        list.remove(this.id);
+        Iterator<Map.Entry<Long, Tag>> it = list.entrySet().iterator();
+        while(it.hasNext()){
+            Map.Entry<Long, Tag> item = it.next();
+            if(this == item.getValue()){
+                it.remove();
+                break;
+            }
+        }
 
         this.closed = true;
         this.hasSpawned.forEach((id, player) -> this.despawnFrom(player));

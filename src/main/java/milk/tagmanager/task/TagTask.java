@@ -10,7 +10,7 @@ public class TagTask implements Runnable{
             return;
         }
 
-        Tag.list.forEach((id, tag) -> tag.onUpdate());
+        for(Tag tag : Tag.list.values()) tag.onUpdate();
     }
 
 }
