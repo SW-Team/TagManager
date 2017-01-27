@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Tag extends Position{
 
-    public static HashMap<Long, Tag> list = new HashMap<>();
+    public static final HashMap<Long, Tag> list = new HashMap<>();
 
     private long id;
     private long timeout = -1;
@@ -165,12 +165,14 @@ public class Tag extends Position{
     }
 
     public void close(){
-        Iterator<Map.Entry<Long, Tag>> it = list.entrySet().iterator();
-        while(it.hasNext()){
-            Map.Entry<Long, Tag> item = it.next();
-            if(this == item.getValue()){
-                it.remove();
-                break;
+        synchronized(list){
+            Iterator<Map.Entry<Long, Tag>> it = list.entrySet().iterator();
+            while(it.hasNext()){
+                Map.Entry<Long, Tag> item = it.next();
+                if(this == item.getValue()){
+                    it.remove();
+                    break;
+                }
             }
         }
 
