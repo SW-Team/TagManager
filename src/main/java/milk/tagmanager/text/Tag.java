@@ -165,16 +165,7 @@ public class Tag extends Position{
     }
 
     public void close(){
-        synchronized(list){
-            Iterator<Map.Entry<Long, Tag>> it = list.entrySet().iterator();
-            while(it.hasNext()){
-                Map.Entry<Long, Tag> item = it.next();
-                if(this == item.getValue()){
-                    it.remove();
-                    break;
-                }
-            }
-        }
+        list.remove(this.id);
 
         this.closed = true;
         this.hasSpawned.forEach((id, player) -> this.despawnFrom(player));

@@ -3,6 +3,8 @@ package milk.tagmanager.task;
 import cn.nukkit.Server;
 import milk.tagmanager.text.Tag;
 
+import java.util.ArrayList;
+
 public class TagTask implements Runnable{
 
     public void run(){
@@ -10,7 +12,7 @@ public class TagTask implements Runnable{
             return;
         }
 
-        for(Tag tag : Tag.list.values()) tag.onUpdate();
+        for(Tag tag : new ArrayList<>(Tag.list.values())) tag.onUpdate();
     }
 
 }
